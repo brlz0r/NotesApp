@@ -10,11 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import dagger.hilt.android.AndroidEntryPoint
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.AddEditNoteScreen
 import ru.kiruxadance.notesapp.note.presentation.notes.NotesScreen
 import ru.kiruxadance.notesapp.note.presentation.util.Screen
 import ru.kiruxadance.notesapp.ui.theme.NoteAppTheme
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

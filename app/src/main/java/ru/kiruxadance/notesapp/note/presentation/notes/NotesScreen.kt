@@ -7,12 +7,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ru.kiruxadance.notesapp.note.presentation.util.Screen
 
 @Composable
 fun NotesScreen(
     navController: NavController,
+    viewModel: NotesViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()

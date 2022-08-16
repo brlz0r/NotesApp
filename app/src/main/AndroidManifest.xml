@@ -3,6 +3,7 @@
     package="ru.kiruxadance.notesapp">
 
     <application
+        android:name=".NoteApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
