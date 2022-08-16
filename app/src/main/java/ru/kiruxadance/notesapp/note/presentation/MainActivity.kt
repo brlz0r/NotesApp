@@ -1,4 +1,4 @@
-package ru.kiruxadance.notesapp.presentation
+package ru.kiruxadance.notesapp.note.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,10 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ru.kiruxadance.notesapp.R
-import ru.kiruxadance.notesapp.presentation.add_edit_note.AddEditNoteScreen
-import ru.kiruxadance.notesapp.presentation.notes.NotesScreen
-import ru.kiruxadance.notesapp.presentation.util.Screen
+import ru.kiruxadance.notesapp.note.presentation.add_edit_note.AddEditNoteScreen
+import ru.kiruxadance.notesapp.note.presentation.notes.NotesScreen
+import ru.kiruxadance.notesapp.note.presentation.util.Screen
 import ru.kiruxadance.notesapp.ui.theme.NoteAppTheme
 
 class MainActivity : AppCompatActivity() {

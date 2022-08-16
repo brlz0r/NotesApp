@@ -1,4 +1,4 @@
-package ru.kiruxadance.notesapp.presentation.notes
+package ru.kiruxadance.notesapp.note.presentation.notes
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import ru.kiruxadance.notesapp.presentation.util.Screen
+import ru.kiruxadance.notesapp.note.presentation.util.Screen
 
 @Composable
 fun NotesScreen(
@@ -18,7 +18,6 @@ fun NotesScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold (
-        topBar = { TopAppBar {  } },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
