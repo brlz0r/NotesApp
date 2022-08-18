@@ -88,7 +88,6 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
             is AddEditNoteEvent.ChangeTitleFocus -> {
-                println(event.focusState.isFocused)
                 _noteTitle.value = noteTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteTitle.value.text.isBlank()
@@ -135,6 +134,7 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
             is AddEditNoteEvent.ChangeColorBarVisibility -> {
+                //println(event.visibility)
                 _drawBar.value = _drawBar.value.copy(
                     colorBarVisibility = event.visibility
                 )

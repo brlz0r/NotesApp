@@ -32,9 +32,7 @@ import ru.kiruxadance.notesapp.note.presentation.add_edit_note.controllers.DrawC
 @Composable
 fun ControlsBar(
     drawController: DrawController,
-    onDownloadClick: () -> Unit,
     onColorClick: () -> Unit,
-    onBgColorClick: () -> Unit,
     onSizeClick: () -> Unit,
     colorValue: Color,
     sizeValue: Int
@@ -45,7 +43,7 @@ fun ControlsBar(
             "download",
             MaterialTheme.colors.primary
         ) {
-            onDownloadClick()
+            TODO()
         }
         MenuItems(
             Icons.Filled.Undo,

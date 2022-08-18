@@ -3,7 +3,6 @@ package ru.kiruxadance.notesapp.note.data.data_source
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import ru.kiruxadance.notesapp.note.data.convertors.NoteConvertor
 import ru.kiruxadance.notesapp.note.data.convertors.PathWrapperConvertor
 import ru.kiruxadance.notesapp.note.domain.model.Note
 

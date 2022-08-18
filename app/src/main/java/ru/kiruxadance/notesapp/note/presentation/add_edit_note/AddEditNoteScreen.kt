@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import io.ak1.rangvikalp.RangVikalp
 import kotlinx.coroutines.flow.collectLatest
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.ControlsBar
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.CustomSeekbar
@@ -151,38 +152,27 @@ fun AddEditNoteScreen(
 
                 ControlsBar(
                     drawController = drawController,
-                    {
-
-                    },
-                    {
+                    onColorClick = {
                         viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
-                            when (drawBarState.colorBarVisibility) {
-                                false -> true
-                                drawBarState.colorIsBg -> true
-                                else -> false
-                        }))
-                        viewModel.onEvent(AddEditNoteEvent.ChangeColorIsBg(false))
-                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(false))
-                    },
-                    {
-                        viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
-                            when (drawBarState.colorBarVisibility) {
-                                false -> true
-                                !drawBarState.colorIsBg -> true
-                                else -> false
-                        }))
-                        viewModel.onEvent(AddEditNoteEvent.ChangeColorIsBg(true))
-                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(false))
-                    },
-                    {
+                            !drawBarState.colorBarVisibility))
                         viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(
-                            drawBarState.sizeBarVisibility))
+                            false))
+                    },
+                    onSizeClick = {
+                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(
+                            !drawBarState.sizeBarVisibility))
                         viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
-                            drawBarState.colorBarVisibility))
+                            false))
                     },
                     colorValue = drawLineState.currentColor,
                     sizeValue = drawLineState.currentSize
                 )
+
+                RangVikalp(isVisible = drawBarState.colorBarVisibility, showShades = true) {
+                    viewModel.onEvent(AddEditNoteEvent.ChangeCurrentColor(
+                        it))
+                    drawController.changeColor(it)
+                }
 
                 CustomSeekbar(
                     isVisible = drawBarState.sizeBarVisibility,
