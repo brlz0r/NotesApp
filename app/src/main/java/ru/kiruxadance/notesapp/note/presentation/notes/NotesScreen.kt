@@ -1,6 +1,7 @@
 package ru.kiruxadance.notesapp.note.presentation.notes
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -98,7 +100,8 @@ fun NotesScreen(
                                         Screen.AddEditNoteScreen.route +
                                                 "?noteId=${note.id}"
                                     )
-                                },
+                                }
+                                .background(Color.White),
                             onDeleteClick = {
                                 viewModel.onEvent(NotesEvent.DeleteNote(note))
                                 scope.launch {

@@ -1,7 +1,10 @@
 package ru.kiruxadance.notesapp.note.presentation.add_edit_note
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Draw
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ru.kiruxadance.notesapp.note.domain.model.InvalidNoteException
 import ru.kiruxadance.notesapp.note.domain.model.Note
+import ru.kiruxadance.notesapp.note.domain.model.Point
 import ru.kiruxadance.notesapp.note.domain.use_case.NoteUseCases
 import javax.inject.Inject
 
@@ -28,6 +32,14 @@ class AddEditNoteViewModel @Inject constructor(
         hint = "Enter some content"
     ))
     val noteContent: State<NoteTextFieldState> = _noteContent
+
+    private val _notePoint = mutableStateListOf<Offset>()
+    val notePoint:List<Offset> = _notePoint
+
+    private val _noteEditType = mutableStateOf(NoteEditTypeState(
+        isEditTypeDraw = false
+    ))
+    val noteEditType: State<NoteEditTypeState> = _noteEditType
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -62,6 +74,7 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
             is AddEditNoteEvent.ChangeTitleFocus -> {
+                println(event.focusState.isFocused)
                 _noteTitle.value = noteTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteTitle.value.text.isBlank()
@@ -98,6 +111,16 @@ class AddEditNoteViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+            is AddEditNoteEvent.Draw -> {
+                _notePoint.add(event.offset)
+            }
+            AddEditNoteEvent.ChangeEditTypeState -> {
+                _noteEditType.value = _noteEditType.value.copy(
+                    isEditTypeDraw = !_noteEditType.value.isEditTypeDraw,
+                    appBarImage = if (!_noteEditType.value.isEditTypeDraw)
+                        Icons.Filled.Edit else Icons.Filled.Draw,
+                )
             }
         }
     }

@@ -1,5 +1,6 @@
 package ru.kiruxadance.notesapp.note.presentation.add_edit_note.components
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
@@ -20,7 +21,8 @@ fun TransparentHintTextField(
     onValueChange: (String) -> Unit,
     textStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
-    onFocusChange: (FocusState) -> Unit
+    onFocusChange: (FocusState) -> Unit,
+    focusable: Boolean
 ) {
     Box(
         modifier = modifier
@@ -35,6 +37,7 @@ fun TransparentHintTextField(
                 .onFocusChanged {
                     onFocusChange(it)
                 }
+                .focusable(focusable)
         )
         if(isHintVisible) {
             Text(text = hint, style = textStyle, color = Color.DarkGray)

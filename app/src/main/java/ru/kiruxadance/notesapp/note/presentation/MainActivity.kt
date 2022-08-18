@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             NoteAppTheme {
                 Surface(
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.primary
                 ) {
                     val navController = rememberNavController()
                     NavHost(
@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                                 },
                             )
                         ) {
-                            val color = it.arguments?.getInt("noteColor") ?: -1
                             AddEditNoteScreen(
                                 navController = navController,
                             )
