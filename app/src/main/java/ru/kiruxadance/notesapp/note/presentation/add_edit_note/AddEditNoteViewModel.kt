@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ru.kiruxadance.notesapp.note.domain.model.InvalidNoteException
 import ru.kiruxadance.notesapp.note.domain.model.Note
-import ru.kiruxadance.notesapp.note.domain.model.Point
 import ru.kiruxadance.notesapp.note.domain.use_case.NoteUseCases
+import ru.kiruxadance.notesapp.note.presentation.add_edit_note.controllers.DrawController
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,13 +33,26 @@ class AddEditNoteViewModel @Inject constructor(
     ))
     val noteContent: State<NoteTextFieldState> = _noteContent
 
-    private val _notePoint = mutableStateListOf<Offset>()
-    val notePoint:List<Offset> = _notePoint
-
     private val _noteEditType = mutableStateOf(NoteEditTypeState(
         isEditTypeDraw = false
     ))
     val noteEditType: State<NoteEditTypeState> = _noteEditType
+
+    private val _drawController = mutableStateOf(DrawController())
+    val drawController: State<DrawController> = _drawController
+
+    private val _drawBar = mutableStateOf(DrawBarState(
+        sizeBarVisibility = false,
+        colorBarVisibility = false,
+        colorIsBg = false
+    ))
+    val drawBar: State<DrawBarState> = _drawBar
+
+    private val _drawLine = mutableStateOf(DrawLineState(
+        currentColor = Color.Red,
+        currentSize = 10,
+    ))
+    val drawLine: State<DrawLineState> = _drawLine
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -52,6 +65,7 @@ class AddEditNoteViewModel @Inject constructor(
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id
+                        _drawController.value.initPath(note.pathWrappers)
                         _noteTitle.value = noteTitle.value.copy(
                             text = note.title,
                             isHintVisible = false
@@ -99,7 +113,8 @@ class AddEditNoteViewModel @Inject constructor(
                                 title = noteTitle.value.text,
                                 content = noteContent.value.text,
                                 timestamp = System.currentTimeMillis(),
-                                id = currentNoteId
+                                id = currentNoteId,
+                                pathWrappers = _drawController.value.pathList
                             )
                         )
                         _eventFlow.emit(UiEvent.SaveNote)
@@ -112,15 +127,40 @@ class AddEditNoteViewModel @Inject constructor(
                     }
                 }
             }
-            is AddEditNoteEvent.Draw -> {
-                _notePoint.add(event.offset)
-            }
             AddEditNoteEvent.ChangeEditTypeState -> {
                 _noteEditType.value = _noteEditType.value.copy(
                     isEditTypeDraw = !_noteEditType.value.isEditTypeDraw,
                     appBarImage = if (!_noteEditType.value.isEditTypeDraw)
                         Icons.Filled.Edit else Icons.Filled.Draw,
                 )
+            }
+            is AddEditNoteEvent.ChangeColorBarVisibility -> {
+                _drawBar.value = _drawBar.value.copy(
+                    colorBarVisibility = event.visibility
+                )
+            }
+            is AddEditNoteEvent.ChangeColorIsBg -> {
+                _drawBar.value = _drawBar.value.copy(
+                    colorIsBg = event.colorIsBg
+                )
+            }
+            is AddEditNoteEvent.ChangeCurrentColor -> {
+                _drawLine.value = _drawLine.value.copy(
+                    currentColor = event.color
+                )
+            }
+            is AddEditNoteEvent.ChangeCurrentSize -> {
+                _drawLine.value = _drawLine.value.copy(
+                    currentSize = event.size
+                )
+            }
+            is AddEditNoteEvent.ChangeSizeBarVisibility -> {
+                _drawBar.value = _drawBar.value.copy(
+                    sizeBarVisibility = event.visibility
+                )
+            }
+            is AddEditNoteEvent.SetDrawController -> {
+                _drawController.value = event.drawController
             }
         }
     }

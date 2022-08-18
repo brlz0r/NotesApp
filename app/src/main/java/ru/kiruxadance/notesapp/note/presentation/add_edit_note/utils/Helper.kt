@@ -1,28 +1,9 @@
 package ru.kiruxadance.notesapp.note.presentation.add_edit_note.utils
 
-import android.app.Activity
-import android.content.Context
-import android.graphics.Bitmap
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.view.PixelCopy
-import android.view.View
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.core.view.doOnLayout
-import androidx.core.view.drawToBitmap
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
-
-private fun View.getRect(x: Int, y: Int): android.graphics.Rect {
-    val viewWidth = this.width
-    val viewHeight = this.height
-    return android.graphics.Rect(x, y, viewWidth + x, viewHeight + y)
-}
 
 data class PathWrapper(
     var points: SnapshotStateList<Offset>,
@@ -30,8 +11,6 @@ data class PathWrapper(
     val strokeColor: Color,
     val alpha: Float = 1f
 )
-
-data class DrawBoxPayLoad(val bgColor: Color, val path: List<PathWrapper>)
 
 fun createPath(points: List<Offset>) = Path().apply {
     if (points.size > 1) {

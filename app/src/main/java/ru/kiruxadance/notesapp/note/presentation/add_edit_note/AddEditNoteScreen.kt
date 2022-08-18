@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.ControlsBar
+import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.CustomSeekbar
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.TransparentHintTextField
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.controllers.rememberDrawController
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.utils.createPath
@@ -35,19 +36,13 @@ fun AddEditNoteScreen(
 
     val drawController = rememberDrawController()
 
-    val undoVisibility = remember { mutableStateOf(false) }
-    val redoVisibility = remember { mutableStateOf(false) }
-    val colorBarVisibility = remember { mutableStateOf(false) }
-    val sizeBarVisibility = remember { mutableStateOf(false) }
-    val currentColor = remember { mutableStateOf(Color.Red) }
-    val bg = MaterialTheme.colors.background
-    val currentBgColor = remember { mutableStateOf(bg) }
-    val currentSize = remember { mutableStateOf(10) }
-    val colorIsBg = remember { mutableStateOf(false) }
+    val drawBarState = viewModel.drawBar.value
+    val drawLineState = viewModel.drawLine.value
 
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(AddEditNoteEvent.SetDrawController(drawController))
         viewModel.eventFlow.collectLatest { event ->
             when(event) {
                 is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
@@ -160,33 +155,44 @@ fun AddEditNoteScreen(
 
                     },
                     {
-                        colorBarVisibility.value = when (colorBarVisibility.value) {
-                            false -> true
-                            colorIsBg.value -> true
-                            else -> false
-                        }
-                        colorIsBg.value = false
-                        sizeBarVisibility.value = false
+                        viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
+                            when (drawBarState.colorBarVisibility) {
+                                false -> true
+                                drawBarState.colorIsBg -> true
+                                else -> false
+                        }))
+                        viewModel.onEvent(AddEditNoteEvent.ChangeColorIsBg(false))
+                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(false))
                     },
                     {
-                        colorBarVisibility.value = when (colorBarVisibility.value) {
-                            false -> true
-                            !colorIsBg.value -> true
-                            else -> false
-                        }
-                        colorIsBg.value = true
-                        sizeBarVisibility.value = false
+                        viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
+                            when (drawBarState.colorBarVisibility) {
+                                false -> true
+                                !drawBarState.colorIsBg -> true
+                                else -> false
+                        }))
+                        viewModel.onEvent(AddEditNoteEvent.ChangeColorIsBg(true))
+                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(false))
                     },
                     {
-                        sizeBarVisibility.value = !sizeBarVisibility.value
-                        colorBarVisibility.value = false
+                        viewModel.onEvent(AddEditNoteEvent.ChangeSizeBarVisibility(
+                            drawBarState.sizeBarVisibility))
+                        viewModel.onEvent(AddEditNoteEvent.ChangeColorBarVisibility(
+                            drawBarState.colorBarVisibility))
                     },
-                    undoVisibility = undoVisibility,
-                    redoVisibility = redoVisibility,
-                    colorValue = currentColor,
-                    bgColorValue = currentBgColor,
-                    sizeValue = currentSize
+                    colorValue = drawLineState.currentColor,
+                    sizeValue = drawLineState.currentSize
                 )
+
+                CustomSeekbar(
+                    isVisible = drawBarState.sizeBarVisibility,
+                    progress = drawLineState.currentSize,
+                    progressColor = MaterialTheme.colors.primary.toArgb(),
+                    thumbColor = drawLineState.currentColor.toArgb()
+                ) {
+                    viewModel.onEvent(AddEditNoteEvent.ChangeCurrentSize(it))
+                    drawController.changeStrokeWidth(it.toFloat())
+                }
             }
         }
     }

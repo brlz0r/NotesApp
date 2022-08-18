@@ -95,6 +95,12 @@ class DrawController{
         _redoPathList.clear()
         //_historyTracker.tryEmit("${_undoPathList.size}")
     }
+
+    fun initPath(pathWrappers: List<PathWrapper>) {
+        for (pathWrapper in pathWrappers) {
+            _undoPathList.add(pathWrapper)
+        }
+    }
 }
 
 @Composable
