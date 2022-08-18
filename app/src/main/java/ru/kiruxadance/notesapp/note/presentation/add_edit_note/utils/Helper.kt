@@ -56,31 +56,3 @@ fun createPath(points: List<Offset>) = Path().apply {
 private fun calculateMidpoint(start: Offset, end: Offset) =
     Offset((start.x + end.x) / 2, (start.y + end.y) / 2)
 
-
-internal suspend fun View.drawBitmapFromView(context: Context, config: Bitmap.Config): Bitmap =
-    suspendCoroutine { continuation ->
-        doOnLayout { view ->
-            if (Build.VERSION_CODES.O > Build.VERSION.SDK_INT) {
-                continuation.resume(view.drawToBitmap(config))
-                return@doOnLayout
-            }
-
-            val window =
-                (context as? Activity)?.window ?: error("Can't get window from the Context")
-
-            Bitmap.createBitmap(width, height, config).apply {
-                val (x, y) = IntArray(2).apply { view.getLocationInWindow(this) }
-                PixelCopy.request(
-                    window,
-                    getRect(x, y),
-                    this,
-                    { copyResult ->
-                        if (copyResult == PixelCopy.SUCCESS) continuation.resume(this) else continuation.resumeWithException(
-                            RuntimeException("Bitmap generation failed")
-                        )
-                    },
-                    Handler(Looper.getMainLooper())
-                )
-            }
-        }
-    }
