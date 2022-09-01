@@ -1,4 +1,4 @@
-package ru.kiruxadance.notesapp.note.domain.use_case
+package ru.kiruxadance.notesapp.note.domain.use_case.note
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -12,7 +12,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.AddEditNoteScreen
+import ru.kiruxadance.notesapp.note.presentation.login.LoginScreen
 import ru.kiruxadance.notesapp.note.presentation.notes.NotesScreen
+import ru.kiruxadance.notesapp.note.presentation.registration.RegistrationScreen
+import ru.kiruxadance.notesapp.note.presentation.splash.SplashScreen
 import ru.kiruxadance.notesapp.note.presentation.util.Screen
 import ru.kiruxadance.notesapp.ui.theme.NoteAppTheme
 
@@ -28,8 +31,17 @@ class MainActivity : AppCompatActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.NotesScreen.route
+                        startDestination = Screen.SplashScreen.route
                     ) {
+                        composable(route = Screen.SplashScreen.route) {
+                            SplashScreen(navController = navController)
+                        }
+                        composable(route = Screen.LoginScreen.route) {
+                            LoginScreen(navController = navController)
+                        }
+                        composable(route = Screen.RegistrationScreen.route) {
+                            RegistrationScreen(navController = navController)
+                        }
                         composable(route = Screen.NotesScreen.route) {
                             NotesScreen(navController = navController)
                         }
@@ -39,12 +51,6 @@ class MainActivity : AppCompatActivity() {
                             arguments = listOf(
                                 navArgument(
                                     name = "noteId"
-                                ) {
-                                    type = NavType.IntType
-                                    defaultValue = -1
-                                },
-                                navArgument(
-                                    name = "noteColor"
                                 ) {
                                     type = NavType.IntType
                                     defaultValue = -1

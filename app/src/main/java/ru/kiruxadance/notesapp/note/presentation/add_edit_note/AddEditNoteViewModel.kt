@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ru.kiruxadance.notesapp.note.domain.model.InvalidNoteException
 import ru.kiruxadance.notesapp.note.domain.model.Note
-import ru.kiruxadance.notesapp.note.domain.use_case.NoteUseCases
+import ru.kiruxadance.notesapp.note.domain.use_case.note.NoteUseCases
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.controllers.DrawController
 import javax.inject.Inject
 

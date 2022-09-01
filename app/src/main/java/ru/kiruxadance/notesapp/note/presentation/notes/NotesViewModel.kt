@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.kiruxadance.notesapp.note.domain.model.Note
-import ru.kiruxadance.notesapp.note.domain.use_case.NoteUseCases
+import ru.kiruxadance.notesapp.note.domain.use_case.note.NoteUseCases
 import ru.kiruxadance.notesapp.note.domain.util.NoteOrder
 import ru.kiruxadance.notesapp.note.domain.util.OrderType
 import javax.inject.Inject
