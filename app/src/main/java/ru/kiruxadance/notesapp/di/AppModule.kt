@@ -1,8 +1,6 @@
 package ru.kiruxadance.notesapp.di
 
-import android.app.Application
 import android.content.Context
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.kiruxadance.notesapp.note.data.data_source.AuthService
-import ru.kiruxadance.notesapp.note.data.data_source.NoteDatabase
+import ru.kiruxadance.notesapp.note.data.data_source.NoteService
 import ru.kiruxadance.notesapp.note.data.data_source.UserService
 import ru.kiruxadance.notesapp.note.data.interceptor.TokenInterceptor
 import ru.kiruxadance.notesapp.note.data.repository.AuthRepositoryImpl
@@ -24,15 +22,14 @@ import ru.kiruxadance.notesapp.note.domain.repository.AuthRepository
 import ru.kiruxadance.notesapp.note.domain.repository.NoteRepository
 import ru.kiruxadance.notesapp.note.domain.repository.UserRepository
 import ru.kiruxadance.notesapp.note.domain.use_case.auth.AuthUseCases
-import ru.kiruxadance.notesapp.note.domain.use_case.auth.LoginUseCase
+import ru.kiruxadance.notesapp.note.domain.use_case.auth.Login
+import ru.kiruxadance.notesapp.note.domain.use_case.auth.Registration
 import ru.kiruxadance.notesapp.note.domain.use_case.note.*
-import ru.kiruxadance.notesapp.note.domain.use_case.user.GetUserUseCase
+import ru.kiruxadance.notesapp.note.domain.use_case.user.GetUser
 import ru.kiruxadance.notesapp.note.domain.use_case.user.UserUseCases
 import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import javax.inject.Named
 import javax.inject.Singleton
-import kotlin.math.log
 
 
 @Module
@@ -77,7 +74,7 @@ object AppModule {
     ): OkHttpClient {
 
         val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(CONNECTION_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -97,20 +94,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteDatabase(app: Application): NoteDatabase {
-        return Room.databaseBuilder(
-            app,
-            NoteDatabase::class.java,
-            NoteDatabase.DATABASE_NAME
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideNoteRepository(db: NoteDatabase): NoteRepository {
-        return NoteRepositoryImpl(db.noteDao)
+    fun provideNoteRepository(noteService: NoteService): NoteRepository {
+        return NoteRepositoryImpl(noteService)
     }
 
     @Provides
@@ -120,6 +105,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserService(retrofit : Retrofit) : UserService = retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNoteService(retrofit : Retrofit) : NoteService = retrofit.create(NoteService::class.java)
 
     @Provides
     @Singleton
@@ -141,6 +130,7 @@ object AppModule {
             deleteNote = DeleteNote(repository),
             addNote = AddNote(repository),
             getNote = GetNote(repository),
+            updateNote = UpdateNote(repository)
         )
     }
 
@@ -148,7 +138,8 @@ object AppModule {
     @Singleton
     fun provideAuthUseCases(repository: AuthRepository): AuthUseCases {
         return AuthUseCases(
-            login = LoginUseCase(repository),
+            login = Login(repository),
+            registration = Registration(repository)
         )
     }
 
@@ -156,7 +147,7 @@ object AppModule {
     @Singleton
     fun provideUserUseCases(repository: UserRepository): UserUseCases {
         return UserUseCases(
-            getUserUseCase = GetUserUseCase(repository),
+            getUser = GetUser(repository),
         )
     }
 

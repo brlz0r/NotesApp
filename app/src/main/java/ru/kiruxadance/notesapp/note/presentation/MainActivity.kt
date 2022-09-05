@@ -5,11 +5,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.AddEditNoteScreen
 import ru.kiruxadance.notesapp.note.presentation.login.LoginScreen
@@ -52,8 +51,8 @@ class MainActivity : AppCompatActivity() {
                                 navArgument(
                                     name = "noteId"
                                 ) {
-                                    type = NavType.IntType
-                                    defaultValue = -1
+                                    type = NavType.StringType
+                                    defaultValue = ""
                                 },
                             )
                         ) {

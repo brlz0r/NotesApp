@@ -11,7 +11,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.kiruxadance.notesapp.common.Resource
 import ru.kiruxadance.notesapp.note.domain.model.InvalidNoteException
 import ru.kiruxadance.notesapp.note.domain.model.Note
 import ru.kiruxadance.notesapp.note.domain.use_case.note.NoteUseCases
@@ -57,11 +59,11 @@ class AddEditNoteViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var currentNoteId: Int? = null
+    private var currentNoteId: String? = null
 
     init {
-        savedStateHandle.get<Int>("noteId")?.let { noteId ->
-            if(noteId != -1) {
+        savedStateHandle.get<String>("noteId")?.let { noteId ->
+            if(noteId != "") {
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id
@@ -107,15 +109,18 @@ class AddEditNoteViewModel @Inject constructor(
             is AddEditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     try {
-                        noteUseCases.addNote(
-                            Note(
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                timestamp = System.currentTimeMillis(),
-                                id = currentNoteId,
-                                pathWrappers = _drawController.value.pathList
-                            )
+                        val note = Note(
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            timestamp = System.currentTimeMillis(),
+                            id = currentNoteId,
+                            pathWrappers = _drawController.value.pathList
                         )
+                        if (currentNoteId == null) {
+                            addNote(note)
+                        } else {
+                            updateNote(currentNoteId!!, note)
+                        }
                         _eventFlow.emit(UiEvent.SaveNote)
                     } catch(e: InvalidNoteException) {
                         _eventFlow.emit(
@@ -134,7 +139,6 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
             is AddEditNoteEvent.ChangeColorBarVisibility -> {
-                //println(event.visibility)
                 _drawBar.value = _drawBar.value.copy(
                     colorBarVisibility = event.visibility
                 )
@@ -161,6 +165,42 @@ class AddEditNoteViewModel @Inject constructor(
             }
             is AddEditNoteEvent.SetDrawController -> {
                 _drawController.value = event.drawController
+            }
+        }
+    }
+
+    private fun addNote(note: Note) {
+        viewModelScope.launch {
+            noteUseCases.addNote(note).collectLatest{
+                when(it) {
+                    is Resource.Success -> {
+                        _eventFlow.emit(UiEvent.ShowSnackbar("Note not added"))
+                    }
+                    is Resource.Loading -> {
+                        println("Loading")
+                    }
+                    is Resource.Error -> {
+                        _eventFlow.emit(UiEvent.ShowSnackbar(it.message ?: "An unexpected error occured"))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateNote(id: String, note: Note) {
+        viewModelScope.launch {
+            noteUseCases.updateNote(id, note).collectLatest{
+                when(it) {
+                    is Resource.Success -> {
+                        _eventFlow.emit(UiEvent.ShowSnackbar("Note not updated"))
+                    }
+                    is Resource.Loading -> {
+                        println("Loading")
+                    }
+                    is Resource.Error -> {
+                        _eventFlow.emit(UiEvent.ShowSnackbar(it.message ?: "An unexpected error occured"))
+                    }
+                }
             }
         }
     }

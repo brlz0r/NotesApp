@@ -10,14 +10,14 @@ import ru.kiruxadance.notesapp.note.domain.repository.NoteRepository
 import java.io.IOException
 import kotlin.jvm.Throws
 
-class AddNote(
+class UpdateNote(
     private val repository: NoteRepository
 ) {
     @Throws(InvalidNoteException::class)
-    suspend operator fun invoke(note: Note): Flow<Resource<Boolean>> = flow {
+    suspend operator fun invoke(id: String, note: Note) : Flow<Resource<Boolean>> = flow {
         try {
             emit(Resource.Loading())
-            repository.insertNote(note)
+            repository.updateNote(id, note)
             emit(Resource.Success(true))
         } catch(e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))

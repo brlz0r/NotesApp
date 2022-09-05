@@ -8,7 +8,7 @@ class UserRepositoryImpl(
     private val userService: UserService,
 ) : UserRepository{
 
-    override suspend fun getUser(token: String): User? {
-        return userService.getUser().body()
+    override suspend fun getUser(): User {
+        return userService.getUser()
     }
 }

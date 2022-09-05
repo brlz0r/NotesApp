@@ -1,27 +1,32 @@
 package ru.kiruxadance.notesapp.note.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.kiruxadance.notesapp.note.data.data_source.NoteDao
+import kotlinx.coroutines.flow.flow
+import ru.kiruxadance.notesapp.note.data.data_source.NoteService
 import ru.kiruxadance.notesapp.note.domain.model.Note
 import ru.kiruxadance.notesapp.note.domain.repository.NoteRepository
 
 class NoteRepositoryImpl(
-    private val dao: NoteDao
-): NoteRepository
-{
-    override fun getNotes(): Flow<List<Note>> {
-        return dao.getNotes()
+    private val noteService: NoteService
+) : NoteRepository {
+
+    override suspend fun getNotes(): List<Note> {
+        return noteService.getNotes()
     }
 
-    override suspend fun getNoteById(id: Int): Note? {
-       return dao.getNoteById(id)
+    override suspend fun getNoteById(id: String): Note {
+       return noteService.getNote(id)
     }
 
-    override suspend fun insertNote(note: Note) {
-        return dao.insertNote(note)
+    override suspend fun insertNote(note: Note) : Boolean {
+        return noteService.addNote(note).isSuccessful
     }
 
-    override suspend fun deleteNote(note: Note) {
-       return dao.deleteNote(note)
+    override suspend fun updateNote(id: String, note: Note) : Boolean {
+        return noteService.updateNote(id, note).isSuccessful
+    }
+
+    override suspend fun deleteNote(id: String) : Boolean{
+        return noteService.deleteNote(id).isSuccessful
     }
 }

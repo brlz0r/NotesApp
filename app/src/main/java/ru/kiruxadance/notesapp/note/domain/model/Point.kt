@@ -1,5 +1,6 @@
 package ru.kiruxadance.notesapp.note.domain.model
 
-data class User(
-    val userName: String,
+data class Point(
+  val x: Float,
+  val y: Float
 )

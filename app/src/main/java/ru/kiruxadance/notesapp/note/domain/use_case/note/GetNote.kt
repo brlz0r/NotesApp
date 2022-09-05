@@ -6,7 +6,7 @@ import ru.kiruxadance.notesapp.note.domain.repository.NoteRepository
 class GetNote(
     private val repository: NoteRepository
 ) {
-    suspend operator fun invoke(id: Int): Note? {
+    suspend operator fun invoke(id: String): Note? {
         return repository.getNoteById(id)
     }
 }

@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.graphics.toColor
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import io.ak1.rangvikalp.RangVikalp
@@ -24,6 +26,7 @@ import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.Custom
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.components.TransparentHintTextField
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.controllers.rememberDrawController
 import ru.kiruxadance.notesapp.note.presentation.add_edit_note.utils.createPath
+import ru.kiruxadance.notesapp.note.presentation.util.Screen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -52,7 +55,13 @@ fun AddEditNoteScreen(
                     )
                 }
                 is AddEditNoteViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
+                    navController.navigate(
+                        Screen.NotesScreen.route
+                    ){
+                        popUpTo(Screen.AddEditNoteScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
         }

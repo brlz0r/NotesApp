@@ -14,7 +14,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun registration(auth: Auth): Boolean {
-        TODO("Not yet implemented")
+        return authService.registration(auth).code() == 200
     }
 
     override suspend fun refresh(refreshToken: RefreshToken): Token? {

@@ -4,6 +4,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import ru.kiruxadance.notesapp.note.domain.model.Point
 
 data class PathWrapper(
     var points: SnapshotStateList<Offset>,
