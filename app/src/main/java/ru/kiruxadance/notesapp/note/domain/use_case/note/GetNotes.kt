@@ -19,7 +19,22 @@ class GetNotes(
     ): Flow<Resource<List<Note>>> = flow {
         try {
             emit(Resource.Loading())
-            val notes = repository.getNotes()
+            var notes = repository.getNotes()
+
+            notes = when(noteOrder.orderType) {
+                is OrderType.Ascending -> {
+                    when(noteOrder) {
+                        is NoteOrder.Title -> notes.sortedBy { it.title.lowercase() }
+                        is NoteOrder.Date -> notes.sortedBy { it.timestamp }
+                    }
+                }
+                is OrderType.Descending -> {
+                    when(noteOrder) {
+                        is NoteOrder.Title -> notes.sortedByDescending { it.title.lowercase() }
+                        is NoteOrder.Date -> notes.sortedByDescending { it.timestamp }
+                    }
+                }
+            }
             emit(Resource.Success(notes))
         } catch(e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
